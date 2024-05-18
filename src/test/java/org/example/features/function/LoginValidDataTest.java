@@ -28,7 +28,7 @@ public class LoginValidDataTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test_login_with_valid_username_and_password() {
         user.logsIn(username,password);
         user.checkLoginSuccessful();

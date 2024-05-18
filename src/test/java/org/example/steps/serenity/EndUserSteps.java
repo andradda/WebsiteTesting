@@ -1,11 +1,16 @@
 package org.example.steps.serenity;
 
+import groovy.lang.Tuple;
 import net.thucydides.core.annotations.Step;
 import org.example.pages.HomePage;
 import org.example.pages.LoginPage;
 import org.example.pages.ShoppingCartPage;
 import org.example.utils.Configuration;
 import org.junit.Assert;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static net.thucydides.core.webdriver.ThucydidesWebDriverSupport.getDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,15 +42,33 @@ public class EndUserSteps {
     }
 
     @Step
-    public void addItemToCart() {
-        homePage.clickAddToCartButtonOnItem();
+    public void addItemToCart(int itemIndex) {
+        homePage.clickAddToCartButtonOnItem(itemIndex);
     }
 
     @Step
-    public void checkAddItemToCartSuccessful() {
-        Assert.assertEquals(1, homePage.getNumberOfAddedItemsBadgeCount());
+    public void checkAddItemToCartSuccessful(int expectedBadgeCount) {
+        navigateHome();
+        Assert.assertEquals(expectedBadgeCount, homePage.getNumberOfAddedItemsBadgeCount());
         homePage.clickShoppingCartButton();
-        Assert.assertEquals(1, shoppingCartPage.getQuantityOfShoppingCart());
+        Assert.assertEquals(expectedBadgeCount, shoppingCartPage.getQuantityOfShoppingCart());
+    }
+
+    @Step
+    public void removeItemFromCart(int itemIndex) {
+        shoppingCartPage.clickRemoveButton(itemIndex);
+    }
+
+    @SafeVarargs
+    public final void checkShoppingCart(Tuple<String>... expectedItems){
+        checkAddItemToCartSuccessful(expectedItems.length);
+        List<Tuple<String>> items = shoppingCartPage.getShoppinCart();
+        items.forEach(System.out::println);
+        Assert.assertEquals(Arrays.stream(expectedItems).collect(Collectors.toList()), items);
+    }
+
+    public void navigateHome(){
+        homePage.clickAllItemsButton();
     }
 
     @Step

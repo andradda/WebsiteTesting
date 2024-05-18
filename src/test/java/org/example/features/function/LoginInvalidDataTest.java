@@ -29,7 +29,7 @@ public class LoginInvalidDataTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test_login_with_invalid_username_and_password() {
         user.logsIn(username,password);
         user.checkLoginFailed();
